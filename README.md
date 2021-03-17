@@ -1,1 +1,1 @@
-# VSC-waveforms
+# VSC-Waveform-Generator
