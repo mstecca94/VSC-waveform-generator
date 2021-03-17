@@ -1,4 +1,4 @@
-function [ i_a_fft_amplitude ] = current_fft( Ltot , Wave )
+function [ i_a_fft_amplitude ] = current_fft_LCL( Ltot , Wave , kres )
 %% initialize parameters
 ACFilter = Wave.Input.ACFilter ;
 Wire = Wave.Input.Wire ;
@@ -17,7 +17,7 @@ f = Wave.FFT.f ;
 %%
 switch ACFilter
     case {'Custom LCL','LCL'} % LCL filter
-        kres =  Wave.Input.kres ;
+%         kres =  Wave.Input.kres ;
         wres = kres*fs*2*pi ;
         control_bandwidth = wres*1.3/2/pi; % assume active damping cancels h before resonance
         [~,min_f] = min(abs(f-control_bandwidth));

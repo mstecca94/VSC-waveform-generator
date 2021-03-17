@@ -9,13 +9,14 @@ fg = Wave.Input.fg ;
 qfact =  Wave.Input.qfact ;
 kres =  Wave.Input.kres ;
 wres = kres*fs*2*pi ;
-
+sftycoeff = Wave.Input.sftycoeff ;
 %% define total inductance
 
 [ flag2 ] = total_inductance_definition_LCL ( Wave ) ;
+Ltot = flag2*sftycoeff ; 
+Lc = 0.1*Ltot:0.005*Ltot:0.9*Ltot;
+Lg = 0.9*Ltot:-0.005*Ltot:0.1*Ltot;
 
-Lc = 0.1*flag2:0.005*flag2:0.9*flag2;
-Lg = 0.9*flag2:-0.005*flag2:0.1*flag2;
 C = ( Lc + Lg ) ./ ( Lc .* Lg .* wres^2 ) ;  
 
 Temp.C = C(end) ;
@@ -36,9 +37,10 @@ while Cmin >= Cmax
     end
     Wave.Input.kres = Wave.Input.kres +0.025 ;
     [ flag2 ] = total_inductance_definition_LCL ( Wave ) ;
+    Ltot = flag2*sftycoeff ; 
     wres = Wave.Input.kres*fs*2*pi ;
-    Lc = 0.1*flag2:0.005*flag2:0.9*flag2;
-    Lg = 0.9*flag2:-0.005*flag2:0.1*flag2;
+    Lc = 0.1*Ltot:0.005*Ltot:0.9*Ltot;
+    Lg = 0.9*Ltot:-0.005*Ltot:0.1*Ltot;
     C = ( Lc + Lg ) ./ ( Lc .* Lg .* wres^2 ) ;
     Cmax=qfact*P/3/((vll/sqrt(3))^2*2*pi*fg) ;                        % max Cap / max Q absorption
     Cmin = min(C) ;
@@ -64,42 +66,111 @@ C(b) = [] ;
 
 %% selected filter design
 % i have 3 possible arbitrary selection points
+
+Wave.Input.Lc_ad = Lc ;
+Wave.Input.Lg_ad = Lg ;
+Wave.Input.C_ad =  C ;
+
+[ Wave ] = ripple_eval ( Wave ) ;
+
+[~,idxxx]=min(abs(Wave.Input.Ripple_ad-(max(Wave.Input.Ripple_ad)+min(Wave.Input.Ripple_ad))/2)); % avg ripple
+
 if Wave.Input.Filter_selection == 0  % highest ripple
     Wave.Input.C = C(1) ;
     Wave.Input.Lc = Lc(1) ;
     Wave.Input.Lg = Lg(1) ;
+    Wave.Input.Ripple = Wave.Input.Ripple_ad(1) ;
     x_pl = 1 ;
 elseif Wave.Input.Filter_selection == 1 % min C
     Wave.Input.C = C(b_Cmin) ;
     Wave.Input.Lc = Lc(b_Cmin) ;
     Wave.Input.Lg = Lg(b_Cmin) ;
+    Wave.Input.Ripple = Wave.Input.Ripple_ad(b_Cmin) ;
     x_pl = b_Cmin;
 elseif Wave.Input.Filter_selection == 2 % lowest ripple
     Wave.Input.C = C(end) ;
     Wave.Input.Lc = Lc(end) ;
     Wave.Input.Lg = Lg(end) ;
+    Wave.Input.Ripple = Wave.Input.Ripple_ad(end) ;
     x_pl = size(Lg,2);
+elseif Wave.Input.Filter_selection == 3 % mid ripple ripple
+    Wave.Input.C = C(idxxx) ;
+    Wave.Input.Lc = Lc(idxxx) ;
+    Wave.Input.Lg = Lg(idxxx) ;
+    Wave.Input.Ripple = Wave.Input.Ripple_ad(idxxx) ;
+    x_pl = idxxx;
 end
+
+Wave.Input.Lc_sd = [ Lc(1) Lc(idxxx) Lc(end) Lc(b_Cmin) ] ;
+Wave.Input.Lg_sd = [ Lg(1) Lg(idxxx) Lg(end) Lg(b_Cmin) ] ;
+Wave.Input.C_sd = [ C(1) C(idxxx) C(end) C(b_Cmin) ] ;
+Wave.Input.Ripple_sd = [ Wave.Input.Ripple_ad(1) Wave.Input.Ripple_ad(idxxx) Wave.Input.Ripple_ad(end) Wave.Input.Ripple_ad(b_Cmin) ] ;
 
 %% plotting  p.u. values
 if Wave.Input.Plot_Filter_design == 1
-    Lb = (vll/(2*pi*fg*I*sqrt(3)));       % base inductance
-    Cb = (I^2*3/(2*pi*fg*P));       % base capacitance
 
+    Lb = (vll/(2*pi*fg*I*sqrt(3)));       % base inductance
+    Cb = (I^2*3/(2*pi*fg*P));       % base capacitance   
     Lg_pu = Lg / Lb ;
     Lc_pu = Lc / Lb ;
-    C_pu = C / Cb ;
-
+    C_pu =  C  / Cb ;
+    
     lw=1.5;
-    figure;
+    
+%     f1 = figure;
+%     set(f1,'defaultAxesColorOrder',[[0 0 0];[0 0 0]]);
+%     title('LCL Filter Designs')
+%     hold on
+%     plot(Lg*1000,'r','LineWidth',lw)
+%     plot(Lc*1000,'g','LineWidth',lw)
+%     xlabel('Designs [n]')
+%     ylabel('L [mH]')
+%     
+%     yyaxis right
+%     plot(C*10000000,'b','LineWidth',lw)
+%     ylabel('C [uF]')
+%     xline(x_pl,'k','LineWidth',lw);
+% 
+%     grid on
+%     legend('L_{g}','L_{c}','C','Selected Design')
+
+    f2 = figure;
+    set(f2,'defaultAxesColorOrder',[[0 0 0];[0 0 0]]);
     title('LCL Filter Designs')
     hold on
-    plot(Lg_pu,'r','LineWidth',lw)
-    plot(Lc_pu,'g','LineWidth',lw)
-    plot(C_pu,'b','LineWidth',lw)
+    plot(Lg_pu,'LineWidth',lw,'Color','#d62728')
+    plot(Lc_pu,'Color','#2ca02c','LineWidth',lw)
+    plot(C_pu,'Color','#1f77b4','LineWidth',lw)
+    xlabel('Design [n]')
+    ylabel('LCL Parameters [p.u.]')
+    
+    yyaxis right
+    plot(Wave.Input.Ripple_ad,'Color','#ff7f0e','LineWidth',lw)
+    ylabel('Peak Ripple [%]')
     xline(x_pl,'k','LineWidth',lw);
-    xlabel('Designs [n]')
-    ylabel('L-C [p.u.]')
+
     grid on
-    legend('L_{g}','L_{c}','C','Selected Design')
+    legend('L_{g}','L_{c}','C','Ripple','Selected Design')
+%     
+    figure;
+%     title('LCL Filter Designs')
+    hold on
+    plot(flip(Lg_pu),'LineWidth',lw,'Color','#ff7f0e')
+    plot(flip(Lc_pu),'Color','#2ca02c','LineWidth',lw)
+    plot(flip(C_pu),'Color','#1f77b4','LineWidth',lw)
+    ylabel('LCL Parameters [p.u.]')
+    xlabel('Peak Current Ripple [%]')
+    xticklabels(round(flip(Wave.Input.Ripple_ad(1:20:end))))
+    grid on
+    legend('L_{g}','L_{c}','C')
+    xlim([1 size(C_pu,2)])
+    box on
+    ax = gca;
+    ax.GridLineStyle = ':';
+    ax.GridAlpha = 0.5;
+end
+
+%% Plot compliance 
+if Wave.Input.plot_filter_compliance == 1 
+    filter_compliance ( Wave ) ;
 end

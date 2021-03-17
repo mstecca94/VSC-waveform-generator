@@ -1,14 +1,14 @@
-function [ flag2 ] = total_inductance_definition_LCL ( Wave )
+function [ flag2 ] = total_inductance_definition_LCL ( Wave , kres )
 %%
 % this to ensure that a good starting point is found
 start_check = -1 ; 
 it=1; % counter
 Ltot = 1e-6 ; % starting point that should work
 while start_check <= 0 
-    [ i_a_fft_amplitude ] = current_fft ( Ltot , Wave  );
+    [ i_a_fft_amplitude ] = current_fft_LCL ( Ltot , Wave , kres );
     [ IEEE_respected ] = IEEE519 ( i_a_fft_amplitude , Wave );
-    start_check = IEEE_respected ; 
-    Ltot = Ltot/10 ;
+    start_check = IEEE_respected;
+    Ltot = Ltot/10;
     it=it+1;
     if it==3
         disp('Defining new starting Ltot min')
@@ -23,12 +23,12 @@ Ltot_end = Ltot_0*5000 ;
 % actual routine
 x=1;
 for Ltot = Ltot_0:Ltot_0:Ltot_end
-    [ i_a_fft_amplitude ] = current_fft ( Ltot , Wave  );
+    [ i_a_fft_amplitude ] = current_fft_LCL ( Ltot , Wave , kres ) ;
     [ IEEE_respected ] = IEEE519 ( i_a_fft_amplitude , Wave );
     compliance(x,:) = [ Ltot IEEE_respected ] ;    
     if x>2 && compliance(x-1,2) >= 0 && compliance(x,2) < 0 
         flag = Ltot ;
-        break % the break is to cut shorter the computation
+       break % the break is to cut shorter the computation
     end
     x=x+1;   
 end
@@ -39,7 +39,7 @@ if compliance(end,2) >=0
     compliance = [];
     x=1;
     for Ltot = Ltot_0:Ltot_0:Ltot_end
-        [ i_a_fft_amplitude ] = current_fft ( Ltot , Wave  );
+        [ i_a_fft_amplitude ] = current_fft_LCL ( Ltot , Wave , kres );
         [ IEEE_respected ] = IEEE519 ( i_a_fft_amplitude , Wave );
         compliance(x,:) = [ Ltot IEEE_respected ] ;    
         if x>2 && compliance(x-1,2) >= 0 && compliance(x,2) < 0 
@@ -56,7 +56,7 @@ Ltot_end_1 = flag + Ltot_0*1.5 ;
 step = Ltot_0/100;
 x=1;
 for Ltot = Ltot_0_1:step:Ltot_end_1
-    [ i_a_fft_amplitude ] = current_fft ( Ltot , Wave  );
+    [ i_a_fft_amplitude ] = current_fft_LCL ( Ltot , Wave , kres );
     [ IEEE_respected ] = IEEE519 ( i_a_fft_amplitude , Wave );
     compliance_2(x,:) = [ Ltot IEEE_respected ] ;
     

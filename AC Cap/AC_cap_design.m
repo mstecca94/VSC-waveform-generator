@@ -7,8 +7,8 @@ fs  = Wave.Input.fs;     %[Hz] : Switching Frequency
 
 I_c_ac = abs(rms(Wave.Current.i_converter_side - Wave.Current.i_grid_side)) ;
 
-ESR = 0.001 ./ (2*pi*fs*AC_Cap.all_ac(:,1)/1000000) ;
-
+ESR = 1e-3 ./ (2*pi*fs*AC_Cap.all_ac(:,1)*1e-6) ;
+%%
 N_parallel=ceil(I_c_ac./AC_Cap.all_ac(:,2));
 Capacitance = AC_Cap.all_ac(:,1)./N_parallel;
 Cost = 3*( AC_Cap.all_ac(:,1)*AC_Cap.ac_p1 + AC_Cap.ac_p2 ).*N_parallel ; 

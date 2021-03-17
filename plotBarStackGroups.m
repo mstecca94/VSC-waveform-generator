@@ -1,4 +1,4 @@
-function [] = plotBarStackGroups(stackData, groupLabels)
+function [] = plotBarStackGroups(stackData, groupLabels , colors)
 %% Plot a set of stacked bars, but group them according to labels provided.
 %%
 %% Params: 
@@ -41,7 +41,7 @@ set(gca,'XTick',1:NumGroupsPerAxis);
 set(gca,'XTickLabelMode','manual');
 set(gca,'XTickLabel',groupLabels);
 
-colors = [1 0 0 ; 0 1 0; 0 0 1]; %or define your own color order; 1 for each m segments
+% colors = [1 0 0 ; 0 1 0; 0 0 1]; %or define your own color order; 1 for each m segments
 colors = repelem(colors,size(h,1),1); 
 colors = mat2cell(colors,ones(size(colors,1),1),3);
 set(h,{'FaceColor'},colors)

@@ -1,4 +1,5 @@
 function [ Wave ] = carrier_generation ( Wave )
+
 t = Wave.Input.t ;
 phi = Wave.Input.phi ;
 vdc = Wave.Input.vdc ;

@@ -160,6 +160,11 @@ switch Wave.Input.InductorDesign
         [~,b2]=min(Optimality_Lg);
         Lc_Design = Wave.Inductor.Lc.Pareto(Result_Lc2(b,12)).Result(Result_Lc2(b,14),Result_Lc2(b,13)); 
         Lg_Design = Wave.Inductor.Lg.Pareto(Result_Lg2(b2,12)).Result(Result_Lg2(b2,14),Result_Lg2(b2,13)); 
+    case 'Custom Point' 
+        b = Wave.Input.InductorDesignCustom(1) ;
+        b2 = Wave.Input.InductorDesignCustom(2) ; 
+        Lc_Design = Wave.Inductor.Lc.Pareto(Result_Lc2(b,12)).Result(Result_Lc2(b,14),Result_Lc2(b,13)); 
+        Lg_Design = Wave.Inductor.Lg.Pareto(Result_Lg2(b2,12)).Result(Result_Lg2(b2,14),Result_Lg2(b2,13)); 
 end
 Wave.Inductor.Design_spec_legend = {'Total Weight','Core Weight','Wire Weight','Total Losses',...
     'core Weight','Wire Weight','Bad Result','Material Type','Core Cost','Wire Cost','Total Cost',...
@@ -169,6 +174,9 @@ Wave.Inductor.Lg_Design = Lg_Design ;
 Wave.Inductor.Lc_Design_spec = Result_Lc2(b,:) ;
 Wave.Inductor.Lc_Design = Lc_Design ;
 Wave.Inductor.Lg_Design_spec = Result_Lg2(b2,:) ;
+
+Wave.Inductor.Lg_Design_All = Result_Lg2 ;
+Wave.Inductor.Lc_Design_All = Result_Lc2 ;
 
 %%
 if Wave.Input.plot_InductorDesign == 1 

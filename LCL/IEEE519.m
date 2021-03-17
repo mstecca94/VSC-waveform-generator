@@ -4,7 +4,7 @@ fg = Wave.Input.fg ;
 f = Wave.FFT.f ;
 harmonics  = [f/fg ; i_a_fft_amplitude/i_a_fft_amplitude(2)*100 ]; 
 harmonics(:,1)=[];
-last_harmonic = 200 ;
+last_harmonic = Wave.Input.fs/fg*15 ;
 % odd harmonics
 for h=3:2:last_harmonic
     if h>=3 && h<11
@@ -38,7 +38,7 @@ maxH(1,:) = [ 1 100 0 ];
 compliance_check  = round(harmonics(2,1:last_harmonic) - maxH(:,2)',6) ;
 compliance_check(compliance_check<=0)=0;
 IEEE_respected = sum ( compliance_check ) ;
-if compliance_check <= 0 
+if IEEE_respected <= 0 
     IEEE_respected = -1 ;
 end
 end

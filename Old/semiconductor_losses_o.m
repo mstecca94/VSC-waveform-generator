@@ -3,7 +3,7 @@ function [ Wave ] = semiconductor_losses ( Wave )
 fg = Wave.Input.fg ;         %[Hz] : Grid Frequency
 vdc = Wave.Input.vdc;            %[V]  : DC link Voltage
 topology = Wave.Input.Topology ; 
-% Application = Wave.Input.Application ;
+Application = Wave.Input.Application ;
 nps = Wave.Input.nps ;
 
 if strcmp(topology,'Three Level NPC') || strcmp(topology,'Three Level TTYPE')
@@ -19,14 +19,21 @@ switch topology
 
         i_t12_rms = Wave.SemiconductorLosses.I_T1_wr_avg  ;
         i_d12_rms = Wave.SemiconductorLosses.I_D1_wr_avg ;
-        if strcmp(topology,'Two Level') == 1
-            i_eon = abs(Wave.Current.TurnONCurrent/nps)  ;
-            i_err = i_eon*nps ;
-            i_eoff = abs(Wave.Current.TurnOFFCurrent/nps)  ;
-        else
-            i_eon = abs(Wave.Current.TurnONCurrent/nps)  ;
-            i_err = i_eon ;
-            i_eoff = abs(Wave.Current.TurnOFFCurrent/nps)  ;
+        switch Application
+            case 'Grid Connected'
+                i_eon = abs(Wave.Current.TurnONCurrent)  ;
+                i_err = i_eon ;
+                i_eoff = abs(Wave.Current.TurnOFFCurrent)  ;
+            case 'Motor Drive'
+                if strcmp(topology,'Two Level') == 1
+                    i_eon = abs(Wave.Current.TurnONCurrent/2)  ;
+                    i_err = i_eon*2 ;
+                    i_eoff = abs(Wave.Current.TurnOFFCurrent/2)  ;
+                else
+                    i_eon = abs(Wave.Current.TurnONCurrent/nps)  ;
+                    i_err = i_eon ;
+                    i_eoff = abs(Wave.Current.TurnOFFCurrent/nps)  ;
+                end
         end
         U__Bt = Wave.SemiconductorParameters.U__Bt ;
         U__Bd = Wave.SemiconductorParameters.U__Bd ; 
@@ -65,32 +72,32 @@ switch topology
 
         Ps_t12 = P_eon_t12 + P_eoff_t12 ;
         Ps_d12 = P_err_d12 ;
-%         switch Application
-%             case 'Grid Connected'
-%                 Ps_comp=[Ps_t12 Ps_d12 Ps_t12 Ps_d12];
-%             case 'Motor Drive'
+        switch Application
+            case 'Grid Connected'
+                Ps_comp=[Ps_t12 Ps_d12 Ps_t12 Ps_d12];
+            case 'Motor Drive'
                 if strcmp(topology,'Two Level') == 1
-                    Ps_comp=[Ps_t12*nps Ps_d12 Ps_t12*nps Ps_d12];
+                    Ps_comp=[Ps_t12*2 Ps_d12 Ps_t12*2 Ps_d12];
                 else
                     Ps_comp=[Ps_t12 Ps_d12 Ps_t12 Ps_d12]*nps;
                 end
-%         end
+        end
         Ps_tot=sum(Ps_comp);
         %% Cond Losses
         Pc_t1=i_t12_rms.^2*rt+i_t12_avg*Vt;
         Pc_t2=Pc_t1;
         Pc_d1=i_d12_rms.^2*rd+i_d12_avg*Vd;
         Pc_d2=Pc_d1;
-%         switch Application
-%             case 'Grid Connected'
-%                 Pc_comp=[Pc_t1 Pc_d1 Pc_t2 Pc_d2];
-%             case 'Motor Drive'
+        switch Application
+            case 'Grid Connected'
+                Pc_comp=[Pc_t1 Pc_d1 Pc_t2 Pc_d2];
+            case 'Motor Drive'
                 if strcmp(topology,'Two Level') == 1
-                    Pc_comp=[Pc_t1*nps Pc_d1 Pc_t2*nps Pc_d2];
+                    Pc_comp=[Pc_t1*2 Pc_d1 Pc_t2*2 Pc_d2];
                 else
                     Pc_comp=[Pc_t1 Pc_d1 Pc_t2 Pc_d2]*nps;
                 end
-%         end        
+        end        
         Pc_tot=sum(Pc_comp);
         %% total losses per component
         Pt1=Pc_t1+Ps_t12;
