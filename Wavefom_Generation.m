@@ -12,10 +12,10 @@ Wave.Input.Plot_Filter_design = 1 ; % to plot the AC Filter design
 Wave.Input.Application = 'Grid Connected' ;
 Wave.Input.nps = 2 ; % number of parallel switches 1/3
 
-Wave.Input.vdc = 650 ; % 1kV DC
-Wave.Input.vll = 380 ; % 400 V line-to-line
-Wave.Input.Pmax = 4500 ;% 100kW 
-Wave.Input.P = 4500 ;% 100kW
+Wave.Input.vdc = 650 ; % V DC
+Wave.Input.vll = 380 ; % V line-to-line
+Wave.Input.Pmax = 4500 ;% kW 
+Wave.Input.P = 4500 ; % kW
 Wave.Input.I = Wave.Input.P/(sqrt(3)*Wave.Input.vll) ;
 Wave.Input.t_step = 0.5*1e-6 ; % time step
 Wave.Input.fg = 50 ; % 50 Hz
@@ -25,8 +25,8 @@ Wave.Input.phi = 0/180*pi ;
 Wave.Input.M = 2*Wave.Input.vll*sqrt(2/3)/Wave.Input.vdc; 
 
 %%%%%%%%%% Topology / Modulation / N Wire selection / AC Filter %%%%%%%%%%%
-Wave.Input.Topology = 'Two Level';
-% Wave.Input.Topology = 'Two Level - SiC';
+% Wave.Input.Topology = 'Two Level';
+Wave.Input.Topology = 'Two Level - SiC';
 
 Wave.Input.Wire = 3 ; % 3 or 4 wire (3+VG) system
 
@@ -41,11 +41,11 @@ Wave.Input.kres = Wave.Input.fres/Wave.Input.fs;
 % Wave.Input.Modulation = 'S-PWM' ;
 % Wave.Input.Modulation = 'Third Harmonic Injection 1/4';
 % Wave.Input.Modulation = 'Third Harmonic Injection 1/6' ; 
-Wave.Input.Modulation = 'SV-PWM';
+% Wave.Input.Modulation = 'SV-PWM';
 % Wave.Input.Modulation = 'D-PWM MIN';
 % Wave.Input.Modulation = 'D-PWM MAX';
 % Wave.Input.Modulation = 'D-PWM 0';
-% Wave.Input.Modulation = 'D-PWM 1';
+Wave.Input.Modulation = 'D-PWM 1';
 % Wave.Input.Modulation = 'D-PWM 2';
 % Wave.Input.Modulation = 'D-PWM 3'; 
 
