@@ -2,7 +2,7 @@ function [ Wave ] = current_processing ( Wave )
 
 %%
 Topology = Wave.Input.Topology ;
-Add_LCL = Wave.Input.Add_LCL ;
+Add_LCL = 1 ;
 % Application = Wave.Input.Application ;
 nps = Wave.Input.nps ;
 switch Topology 
