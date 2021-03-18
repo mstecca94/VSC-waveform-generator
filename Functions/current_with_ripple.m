@@ -109,7 +109,8 @@ Wave.Current.i_grid_side_dmpd = i2_wave_dmpd ;
 [ Wave ] = current_post_LCL ( Wave ) ;
 
 %% filter compliance
-
-filter_compliance ( Wave )
+if Wave.Input.Plot_Filter_compliance == 1
+    filter_compliance ( Wave )
+end
 
 end

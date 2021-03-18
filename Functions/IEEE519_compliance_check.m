@@ -56,6 +56,7 @@ lw = 1.25 ;
 harmonics2 = harmonics(:,harmonics(1,:)>=hs*0.8);
 harmonics2 = harmonics2(:,harmonics2(2,:)>=1e-8);
 %%
+
 figure;
 hold on
 title('Current harmonics magnitude')
@@ -69,21 +70,5 @@ grid on
 set(gca, 'YScale', 'log')
 colormap(map)
 legend('Amplitude','Odd harmonics limits','Even harmonics limits')
-
-
-%%
-% figure;
-% hold on
-% title('Current harmonics magnitude')
-% plot(harmonics(1,1:2:end),harmonics(2,1:2:end),'b','LineWidth',lw) 
-% plot(harmonics(1,2:2:end),harmonics(2,2:2:end),'r','LineWidth',lw)
-% scatter(maxH(:,1),maxH(:,2),[],maxH(:,3),'filled')
-% xlabel('Harmonic number [n]')
-% ylabel('Magnitude [p.u.]')
-% xlim([0 last_harmonic])
-% grid on
-% set(gca, 'YScale', 'log')
-% colormap(map)
-% legend('Odd harmonics','Even harmonics')
 
 end

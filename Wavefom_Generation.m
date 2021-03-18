@@ -6,7 +6,7 @@ ccc
 Wave.Input.plot_arm_volt = 1 ;
 Wave.FFT.plotting = 1 ; % 0 no plotting / 1 simplified / 2 full
 Wave.Input.plot_transition = 1 ; % to plot turn on / off transitions
-Wave.Input.Plot_Filter_design = 1 ; % to plot the AC Filter design  
+Wave.Input.Plot_Filter_compliance = 1 ; % to plot the AC Filter design  
 
 %%%%%%%%%%%%%%%%%%%%%%% set parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Wave.Input.Application = 'Grid Connected' ;
@@ -20,7 +20,7 @@ Wave.Input.I = Wave.Input.P/(sqrt(3)*Wave.Input.vll) ;
 Wave.Input.t_step = 0.5*1e-6 ; % time step
 Wave.Input.fg = 50 ; % 50 Hz
 Wave.Input.t = Wave.Input.t_step:Wave.Input.t_step:1/Wave.Input.fg; % 1 period
-Wave.Input.fs = 12050 ; % 10 kHz
+Wave.Input.fs = 16050 ; % 10 kHz
 Wave.Input.phi = 0/180*pi ;
 Wave.Input.M = 2*Wave.Input.vll*sqrt(2/3)/Wave.Input.vdc; 
 
